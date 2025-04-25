@@ -1,0 +1,24 @@
+{
+  "name": "hmcts",
+  "version": "1.0.0",
+  "description": "This is for the hmtc coding chellenage",
+  "main": "./backend/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/index.js"
+  },
+  "author": "Jonathan Adams",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dot": "^1.1.3",
+    "dotenv": "^16.5.0",
+    "env": "^0.0.2",
+    "express": "^5.1.0",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.13.3",
+    "path": "^0.12.7"
+  }
+}

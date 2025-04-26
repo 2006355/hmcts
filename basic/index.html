@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>Case Work Task</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div>
+            <h1>Case Work Task</h1>
+            <p>Welcome to your new site! This is a simple HTML5 template.</p>
+            <h2>Task for Caseworker</h2>
+            <div id="task" class="task"></div>
+        </div>
+        <script>
+            function getData() {
+                $.ajax({
+                    url: 'http://localhost:8000/task',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(data);
+                        var taskContainer = document.getElementById('task');
+                        taskContainer.innerHTML = ''; // Clear previous content
+                        for (var i = 0; i < data.length; i++) {
+                            taskContainer.innerHTML += '<div class="task-item">';
+                            taskContainer.innerHTML += '<h3>' + data[i].title + '</h3>';
+                            taskContainer.innerHTML += '<p>' + data[i].d + '</p>';
+                            taskContainer.innerHTML += '</div>';
+                        }
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+            }
+
+            // Call the function to fetch data
+            getData();
+        </script>
+    </body>
+</html>

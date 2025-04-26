@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function Card() {
+    const [tasks, setTasks] = useState([]); // State to store all tasks
     const [task, setTask] = useState({
         _id: "",
         title: "",
@@ -18,20 +19,16 @@ function Card() {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                console.log(data);
-                const firstTask = data[0]; // Assuming you want to display the first task
-                setTask({
-                    _id: firstTask._id,
-                    title: firstTask.title,
-                    description: firstTask.description,
-                    status: firstTask.status
-                });
+                console.log("Fetched tasks:", data);
+                //get the last callback
+                
+                setTasks(data); // Store all tasks in the `tasks` state
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
         fetchData();
-    }, []);
+    }, []); // Empty dependency array ensures this runs only once
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -41,8 +38,8 @@ function Card() {
         }));
     };
 
-    const handleDelete = () => {
-        fetch(`http://localhost:8000/task/${task._id}`, {
+    const handleDelete = (id) => {
+        fetch(`http://localhost:8000/task/${id}`, {
             method: 'DELETE'
         })
         .then(response => {
@@ -50,14 +47,16 @@ function Card() {
                 throw new Error('Network response was not ok');
             }
             console.log('Task deleted successfully');
+            setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id)); // Remove the deleted task from the state
         })
         .catch(error => {
             console.error('Error deleting task:', error);
         });
     };
 
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing); // Toggle between view and edit mode
+    const handleEditToggle = (task) => {
+        setIsEditing(true);
+        setTask(task); // Set the selected task for editing
     };
 
     const handleCreateToggle = () => {
@@ -66,12 +65,13 @@ function Card() {
     };
 
     const handleCreate = () => {
+        const { _id, ...taskWithoutId } = task; // Exclude _id from the task object
         fetch('http://localhost:8000/task', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(task)
+            body: JSON.stringify(taskWithoutId) // Send task without _id
         })
         .then(response => {
             if (!response.ok) {
@@ -81,6 +81,7 @@ function Card() {
         })
         .then(data => {
             console.log('Task created successfully:', data);
+            setTasks((prevTasks) => [...prevTasks, data]); // Add the new task to the state
             setIsCreating(false); // Exit create mode after successful creation
         })
         .catch(error => {
@@ -104,6 +105,9 @@ function Card() {
         })
         .then(data => {
             console.log('Task updated successfully:', data);
+            setTasks((prevTasks) =>
+                prevTasks.map((t) => (t._id === data._id ? data : t)) // Update the task in the state
+            );
             setIsEditing(false); // Exit edit mode after successful save
         })
         .catch((error) => {
@@ -112,72 +116,80 @@ function Card() {
     };
 
     return (
-        isCreating ? (
-            // Create mode: Render input fields for new task
-            <>
-                <h2>Create New Task</h2>
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Title"
-                    value={task.title}
-                    onChange={handleInputChange}
-                />
-                <textarea
-                    name="description"
-                    placeholder="Description"
-                    value={task.description}
-                    onChange={handleInputChange}
-                />
-                <select
-                    name="status"
-                    value={task.status}
-                    onChange={handleInputChange}
-                >
-                    <option value="">Select Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <button onClick={handleCreate}>Create</button>
-                <button onClick={handleCreateToggle}>Cancel</button>
-            </>
-        ) : isEditing ? (
-            // Edit mode: Render input fields for editing task
-            <>
-                <input
-                    type="text"
-                    name="title"
-                    value={task.title}
-                    onChange={handleInputChange}
-                />
-                <textarea
-                    name="description"
-                    value={task.description}
-                    onChange={handleInputChange}
-                />
-                <select
-                    name="status"
-                    value={task.status}
-                    onChange={handleInputChange}
-                >
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In Progress</option>
-                    <option value="Completed">Completed</option>
-                </select>
-                <button onClick={handleSave}>Save</button>
-                <button onClick={handleDelete}>Delete</button>
-            </>
-        ) : (
-            // View mode: Render static elements
-            <>
-                <h2>{task.title}</h2>
-                <p>{task.description}</p>
-                <p>Status: {task.status}</p>
-                <button onClick={handleEditToggle}>Edit</button>
-                <button onClick={handleCreateToggle}>Create New Task</button>
-            </>
-        )
+        <>
+            {isCreating ? (
+                // Create mode: Render input fields for new task
+                <>
+                    <h2>Create New Task</h2>
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="Title"
+                        value={task.title}
+                        onChange={handleInputChange}
+                    />
+                    <textarea
+                        name="description"
+                        placeholder="Description"
+                        value={task.description}
+                        onChange={handleInputChange}
+                    />
+                    <select
+                        name="status"
+                        value={task.status}
+                        onChange={handleInputChange}
+                    >
+                        <option value="">Select Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <button onClick={handleCreate}>Create</button>
+                    <button onClick={handleCreateToggle}>Cancel</button>
+                </>
+            ) : isEditing ? (
+                // Edit mode: Render input fields for editing task
+                <>
+                    <input
+                        type="text"
+                        name="title"
+                        value={task.title}
+                        onChange={handleInputChange}
+                    />
+                    <textarea
+                        name="description"
+                        value={task.description}
+                        onChange={handleInputChange}
+                    />
+                    <select
+                        name="status"
+                        value={task.status}
+                        onChange={handleInputChange}
+                    >
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <button onClick={handleSave}>Save</button>
+                    <button onClick={() => setIsEditing(false)}>Cancel</button>
+                </>
+            ) : (
+                // View mode: Render all tasks
+                <>
+                    <h1>Tasks</h1>
+                    {tasks.map((task) => (
+                        <div key={task._id} className="task-card">
+                            <h2>{task.title}</h2>
+                            <p>{task.description}</p>
+                            <p>Status: {task.status}</p>
+                            <button onClick={() => handleEditToggle(task)}>Edit</button>
+                            <button onClick={() => handleDelete(task._id)}>Delete</button>
+                        </div>
+                    ))}
+                    <button onClick={handleCreateToggle}>Create New Task</button>
+                </>
+            )}
+        </>
     );
 }
 

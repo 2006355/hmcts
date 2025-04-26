@@ -27,5 +27,5 @@ const TaskSchema = new Schema({
 });
 
 const TaskModel = mongoose.model('Task', TaskSchema);
-// Removed deprecated createIndexes method
+// Removed explicit createIndexes call as Mongoose handles it automatically
 export default TaskModel;

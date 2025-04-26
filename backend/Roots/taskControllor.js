@@ -23,13 +23,13 @@ const create = async (req, res) => {
 
 const list = async (req, res) => {
     try {
-      let task= await TaskModel.find().select('name of task')
-      console.log("Got task" + task)
-      res.json(task)
+      let tasks = await TaskModel.find().select('title description status');
+      console.log("Got tasks: ", tasks);
+      res.json(tasks);
     } catch (err) {
       return res.status(400).json({
         error: errorHandler.getErrorMessage(err)
-      })
+      });
     }
   }
   const taskByID = async (req, res, next, id) => {

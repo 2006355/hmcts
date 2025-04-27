@@ -6,7 +6,8 @@ function Card() {
         _id: "",
         title: "",
         description: "",
-        status: ""
+        status: "",
+        dueDate: ""
     });
     const [isEditing, setIsEditing] = useState(false); // State to toggle edit mode
     const [isCreating, setIsCreating] = useState(false); // State to toggle create mode
@@ -61,7 +62,7 @@ function Card() {
 
     const handleCreateToggle = () => {
         setIsCreating(!isCreating); // Toggle create mode
-        setTask({ title: "", description: "", status: "" }); // Reset task fields for new task
+        setTask({ title: "", description: "", status: "", dueDate:""}); // Reset task fields for new task
     };
 
     const handleCreate = () => {
@@ -144,6 +145,7 @@ function Card() {
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select>
+                    <input type="date" name="dueDate" onChange={handleInputChange} />
                     <button onClick={handleCreate}>Create</button>
                     <button onClick={handleCreateToggle}>Cancel</button>
                 </>
@@ -170,6 +172,7 @@ function Card() {
                         <option value="In Progress">In Progress</option>
                         <option value="Completed">Completed</option>
                     </select>
+                    <input type="date" name="dueDate" value={task.dueDate} onChange={handleInputChange} />
                     <button onClick={handleSave}>Save</button>
                     <button onClick={() => setIsEditing(false)}>Cancel</button>
                 </>
@@ -182,6 +185,7 @@ function Card() {
                             <h2>{task.title}</h2>
                             <p>{task.description}</p>
                             <p>Status: {task.status}</p>
+                            <p>Due Date: {new Date(task.dueDate).toLocaleDateString()}</p>
                             <button onClick={() => handleEditToggle(task)}>Edit</button>
                             <button onClick={() => handleDelete(task._id)}>Delete</button>
                         </div>

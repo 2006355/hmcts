@@ -15,7 +15,7 @@ function App() {
       <h3>Task List</h3>
       <h4>Click on a task to edit or delete</h4>
       <Task />
-      <Task />
+     
       </div>
     </>
   )

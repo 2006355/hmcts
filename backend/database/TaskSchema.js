@@ -20,6 +20,11 @@ const TaskSchema = new Schema({
         enum: ['Pending', 'In Progress', 'Completed'],
         required: true
     },
+    dueDate: {
+        type: Date,
+        required: true,
+    },
+
     dateTime: {
         type: Date,
         default: Date.now

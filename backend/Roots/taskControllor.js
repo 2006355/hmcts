@@ -23,7 +23,10 @@ const create = async (req, res) => {
 
 const list = async (req, res) => {
     try {
-      let tasks = await TaskModel.find().select('title description status, dueDate dateTime');
+      let tasks = await TaskModel.find();
+      if (!tasks || tasks.length === 0) {
+        return res.status(404).json({ error: "No tasks found" });
+      }
       console.log("Got tasks: ", tasks);
       res.json(tasks);
     } catch (err) {

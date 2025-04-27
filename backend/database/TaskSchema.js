@@ -17,7 +17,6 @@ const TaskSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['Pending', 'In Progress', 'Completed'],
         required: true
     },
     dueDate: {
@@ -29,7 +28,8 @@ const TaskSchema = new Schema({
         type: Date,
         default: Date.now
     }
-});
+}
+);
 
 const TaskModel = mongoose.model('Task', TaskSchema);
 // Removed explicit createIndexes call as Mongoose handles it automatically
